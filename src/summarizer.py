@@ -108,6 +108,19 @@ def build_summary(report: dict) -> dict:
 
     internal_flags: list[str] = []
 
+    # `resolution` is also free text typed by a technician, not a controlled field — the
+    # same categories that turn up in `technician_notes` (spec.md §4) could land here on a
+    # report we haven't seen, so it goes through the same redaction pass. Found during
+    # review: the first pass only redacted `technician_notes` and published `resolution`
+    # verbatim everywhere, which would leak PII/access info straight through on any report
+    # that put it in the "wrong" field. See docs/REVIEW.md.
+    raw_resolution = report.get("resolution", "") or ""
+    clean_resolution, resolution_categories = redaction.redact(raw_resolution)
+    if resolution_categories:
+        internal_flags.append(
+            f"REDACTED: {', '.join(resolution_categories)} removed from resolution"
+        )
+
     injection_reason = detect.injection_check(raw_notes)
     if injection_reason:
         internal_flags.append(f"INJECTION_ATTEMPT: {injection_reason}")
@@ -116,7 +129,7 @@ def build_summary(report: dict) -> dict:
         parts = report.get("parts_used") or []
         text = (
             f"**{asset} — {date}**\n\n"
-            f"What was done: {report.get('resolution', 'Not recorded.')}\n"
+            f"What was done: {clean_resolution or 'Not recorded.'}\n"
             f"{_format_parts(parts)}\n"
             f"Time on site: {_format_hours(report.get('stated_duration_hours'))}.\n\n"
             f"_This report is undergoing an additional internal review before further "
@@ -149,11 +162,11 @@ def build_summary(report: dict) -> dict:
             "internal_flags": internal_flags,
         }
 
-    contradiction_reason = detect.contradiction_check(report)
+    contradiction_reason = detect.contradiction_check(report)  # checks raw fields, by design
     parts = report.get("parts_used") or []
     recommend_sentences, other_sentences = _split_notes_by_purpose(clean_notes)
     outstanding = " ".join(recommend_sentences) if recommend_sentences else None
-    found_done = _found_done_text(report.get("resolution", ""), other_sentences)
+    found_done = _found_done_text(clean_resolution, other_sentences)
 
     lines = [
         f"**{asset} — {date}**",

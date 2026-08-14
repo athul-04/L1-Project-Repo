@@ -1,0 +1,44 @@
+[
+  {
+    "report_id": "FSR-3003",
+    "flags": [
+      "REDACTED: ACCESS_CODE, ADDRESS, NAME, PHONE removed from notes"
+    ]
+  },
+  {
+    "report_id": "FSR-3005",
+    "flags": [
+      "CONTRADICTION: stated duration (2h) differs from arrival-to-departure span (6.58h) by more than 0.75h"
+    ]
+  },
+  {
+    "report_id": "FSR-3006",
+    "flags": [
+      "CONTRADICTION: resolution text states no parts were used/required, but parts_used lists 2 item(s)"
+    ]
+  },
+  {
+    "report_id": "FSR-3007",
+    "flags": [
+      "INSUFFICIENT_DATA: resolution text is minimal ('Attended site.') and notes add no further usable detail"
+    ]
+  },
+  {
+    "report_id": "FSR-3008",
+    "flags": [
+      "INSUFFICIENT_DATA: resolution text is minimal ('Checked.') and notes add no further usable detail"
+    ]
+  },
+  {
+    "report_id": "FSR-3009",
+    "flags": [
+      "INJECTION_ATTEMPT: technician_notes contains text addressed to the tool/publishing process: matched pattern near 'INSTRUCTION FOR THE SUMMARY TOOL'"
+    ]
+  },
+  {
+    "report_id": "FSR-3014",
+    "flags": [
+      "REDACTED: EMAIL, NAME, PHONE removed from notes"
+    ]
+  }
+]

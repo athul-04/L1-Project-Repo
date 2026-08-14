@@ -109,6 +109,25 @@ class TestBuildSummary(unittest.TestCase):
         self.assertEqual(result["status"], "caveated")
         self.assertIn("do not fully agree", result["published_text"])
 
+    def test_pii_in_resolution_field_is_also_redacted(self):
+        # Regression test for a review-caught security issue: redaction originally only
+        # ran on technician_notes, so PII typed into the `resolution` field (also free
+        # text) would have published straight through. See docs/REVIEW.md.
+        report = {
+            "report_id": "FSR-9999",
+            "asset": "Pump P-99",
+            "technician_id": "T-999",
+            "arrived_at": "2026-03-20T09:00",
+            "departed_at": "2026-03-20T09:30",
+            "stated_duration_hours": 0.5,
+            "parts_used": [],
+            "resolution": "Job done, call Priya Nair on 07911 222333 to confirm access code 7781 removed.",
+            "technician_notes": "",
+        }
+        result = summarizer.build_summary(report)
+        for leaked in ["Priya Nair", "07911 222333", "7781"]:
+            self.assertNotIn(leaked, result["published_text"])
+
     def test_generic_resolution_expanded_with_notes_detail_on_long_multi_asset_report(self):
         # Regression test for a review-caught issue: FSR-3011's resolution field is generic
         # ("Full plant inspection and multiple remedial actions across six assets") while
