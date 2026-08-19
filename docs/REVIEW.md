@@ -1,11 +1,3 @@
-# AI Output Review
-
-This is a review of the AI-generated implementation (commit `04-implement`), done after it
-was working and passing its own tests — not before, per `tasks.md` task 13. Two real issues
-were found and corrected; both are recorded here with the report id evidence that surfaced
-them, per the checklist's evidence standard, and both are covered by a regression test
-committed alongside the fix.
-
 ## 1. Intent
 
 **Checked against:** spec.md §3 (six required fields) and §9 (acceptance criteria).
